@@ -2203,15 +2203,15 @@
                         }
                     });
 
-            // Sort events by date descending
-            owntimeEvents.sort((a, b) => new Date(b.date) - new Date(a.date));
+                    // Sort events by date descending
+                    downtimeEvents.sort((a, b) => new Date(b.date) - new Date(a.date));
 
-            // Display in table using DocumentFragment
-            const tbody = document.querySelector('#downtimeEventsTable tbody');
-            tbody.innerHTML = ''; // Clear existing rows
-            const fragment = document.createDocumentFragment();
+                    // Display in table using DocumentFragment
+                    const tbody = document.querySelector('#downtimeEventsTable tbody');
+                    tbody.innerHTML = ''; // Clear existing rows
+                    const fragment = document.createDocumentFragment();
 
-                downtimeEvents.forEach(event => {
+                    downtimeEvents.forEach(event => {
                         const tr = document.createElement('tr');
 
                         const dateTd = document.createElement('td');
@@ -2249,120 +2249,185 @@
             }
 
 
-            // Function to display quality issues
-            function displayQualityIssues() {
-                try {
-                    const oeeData = JSON.parse(localStorage.getItem('oeeData')) || [];
-                    const qualityStartDateTime = document.getElementById('qualityStartDateTime').value;
-                    const qualityEndDateTime = document.getElementById('qualityEndDateTime').value;
+        // Function to display quality issues
+        function displayQualityIssues() {
+            try {
+                const oeeData = JSON.parse(localStorage.getItem('oeeData')) || [];
+                const qualityStartDateTime = document.getElementById('qualityStartDateTime').value;
+                const qualityEndDateTime = document.getElementById('qualityEndDateTime').value;
 
-                    const qualityIssues = [];
+                const qualityIssues = [];
 
-                    oeeData.forEach(data => {
-                        if (Array.isArray(data.qualityIssues)) {
-                            data.qualityIssues.forEach(issue => {
-                                const issueDate = new Date(issue.startTime);
-                                if (isNaN(issueDate)) return; // Skip invalid dates
+                oeeData.forEach(data => {
+                    if (Array.isArray(data.qualityIssues)) {
+                        data.qualityIssues.forEach(issue => {
+                            const issueDate = new Date(issue.startTime);
+                            if (isNaN(issueDate)) return; // Skip invalid dates
 
-                                let include = true;
-                                if (qualityStartDateTime) {
-                                    include = issueDate >= new Date(qualityStartDateTime);
-                                }
-                                if (include && qualityEndDateTime) {
-                                    include = issueDate <= new Date(qualityEndDateTime);
-                                }
-                                if (include) {
-                                    qualityIssues.push({
-                                        date: issue.startTime,
-                                        workcenter: data.workcenter || 'N/A',
-                                        productionOrder: data.productionOrder || 'N/A',
-                                        category: issue.category || 'N/A',
-                                        description: issue.description || 'N/A',
-                                        duration: issue.duration || 'N/A'
-                                    });
-                                }
-                            });
-                        }
-                    });
+                            let include = true;
+                            if (qualityStartDateTime) {
+                                include = issueDate >= new Date(qualityStartDateTime);
+                            }
+                            if (include && qualityEndDateTime) {
+                                include = issueDate <= new Date(qualityEndDateTime);
+                            }
+                            if (include) {
+                                qualityIssues.push({
+                                    date: issue.startTime,
+                                    workcenter: data.workcenter || 'N/A',
+                                    productionOrder: data.productionOrder || 'N/A',
+                                    category: issue.category || 'N/A',
+                                    description: issue.description || 'N/A',
+                                    duration: issue.duration || 'N/A'
+                                });
+                            }
+                        });
+                    }
+                });
 
-                    // Sort issues by date descending
-                    qualityIssues.sort((a, b) => new Date(b.date) - new Date(a.date));
+                // Sort issues by date descending
+                qualityIssues.sort((a, b) => new Date(b.date) - new Date(a.date));
 
-                    // Display in table using DocumentFragment
-                    const tbody = document.querySelector('#qualityIssuesTable tbody');
-                    tbody.innerHTML = ''; // Clear existing rows
-                    const fragment = document.createDocumentFragment();
+                // Display in table using DocumentFragment
+                const tbody = document.querySelector('#qualityIssuesTable tbody');
+                tbody.innerHTML = ''; // Clear existing rows
+                const fragment = document.createDocumentFragment();
 
-                    qualityIssues.forEach(issue => {
-                        const tr = document.createElement('tr');
+                qualityIssues.forEach(issue => {
+                    const tr = document.createElement('tr');
 
-                        const dateTd = document.createElement('td');
-                        dateTd.textContent = issue.date;
-                        tr.appendChild(dateTd);
+                    const dateTd = document.createElement('td');
+                    dateTd.textContent = issue.date;
+                    tr.appendChild(dateTd);
 
-                        const workcenterTd = document.createElement('td');
-                        workcenterTd.textContent = issue.workcenter;
-                        tr.appendChild(workcenterTd);
+                    const workcenterTd = document.createElement('td');
+                    workcenterTd.textContent = issue.workcenter;
+                    tr.appendChild(workcenterTd);
 
-                        const poTd = document.createElement('td');
-                        poTd.textContent = issue.productionOrder;
-                        tr.appendChild(poTd);
+                    const poTd = document.createElement('td');
+                    poTd.textContent = issue.productionOrder;
+                    tr.appendChild(poTd);
 
-                        const categoryTd = document.createElement('td');
-                        categoryTd.textContent = issue.category;
-                        tr.appendChild(categoryTd);
+                    const categoryTd = document.createElement('td');
+                    categoryTd.textContent = issue.category;
+                    tr.appendChild(categoryTd);
 
-                        const descriptionTd = document.createElement('td');
-                        descriptionTd.textContent = issue.description;
-                        tr.appendChild(descriptionTd);
+                    const descriptionTd = document.createElement('td');
+                    descriptionTd.textContent = issue.description;
+                    tr.appendChild(descriptionTd);
 
-                        const durationTd = document.createElement('td');
-                        durationTd.textContent = issue.duration;
-                        tr.appendChild(durationTd);
+                    const durationTd = document.createElement('td');
+                    durationTd.textContent = issue.duration;
+                    tr.appendChild(durationTd);
 
-                        fragment.appendChild(tr);
-                    });
+                    fragment.appendChild(tr);
+                });
 
-                    tbody.appendChild(fragment);
-                } catch (error) {
-                    console.error('Error displaying quality issues:', error);
-                    // Optionally, display a user-friendly error message
-                    alert('An error occurred while displaying quality issues. Please check the console for more details.');
-                }
+                tbody.appendChild(fragment);
+            } catch (error) {
+                console.error('Error displaying quality issues:', error);
+                alert('An error occurred while displaying quality issues. Please check the console for more details.');
             }
+        }
 
         // Function to export OEE Data
         function exportOEEData() {
-            var oeeData = JSON.parse(localStorage.getItem('oeeData')) || [];
-            var csvContent = 'data:text/csv;charset=utf-8,';
-            csvContent += 'Date,Workcenter,Production Order,Product ID,Shop,Shift,Operator Name,Availability,Performance,Quality,OEE,Total Running Time,Total Downtime,Total Quality Time\n';
+            try {
+                // Retrieve OEE data from localStorage
+                const oeeData = JSON.parse(localStorage.getItem('oeeData')) || [];
 
-            oeeData.forEach(function(data) {
-                csvContent += [
-                    data.date,
-                    data.workcenter,
-                    data.productionOrder,
-                    data.productID,
-                    data.shop,
-                    data.shift,
-                    data.operatorName,
-                    data.availability,
-                    data.performance,
-                    data.quality,
-                    data.oee,
-                    data.totalRunningTime,
-                    data.totalDowntime,
-                    data.totalQualityTime
-                ].join(',') + '\n';
-            });
+                // Check if there's data to export
+                if (oeeData.length === 0) {
+                    alert('No OEE data available to export.');
+                    return;
+                }
 
-            var encodedUri = encodeURI(csvContent);
-            var link = document.createElement('a');
-            link.setAttribute('href', encodedUri);
-            link.setAttribute('download', 'oee_data.csv');
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
+                // Define CSV headers
+                const headers = [
+                    'Date',
+                    'Workcenter',
+                    'Production Order',
+                    'Product ID',
+                    'Shop',
+                    'Shift',
+                    'Operator Name',
+                    'Availability',
+                    'Performance',
+                    'Quality',
+                    'OEE',
+                    'Total Running Time',
+                    'Total Downtime',
+                    'Total Quality Time'
+                ];
+
+                /**
+                 * Escapes CSV fields by handling special characters.
+                 * @param {string|number} value - The data value to escape.
+                 * @returns {string} - The escaped CSV field.
+                 */
+                const escapeCSV = (value) => {
+                    if (typeof value === 'string') {
+                        // Escape double quotes by replacing " with ""
+                        value = value.replace(/"/g, '""');
+                        // If value contains comma, newline, or double quotes, enclose it in double quotes
+                        if (value.search(/("|,|\n)/g) >= 0) {
+                            value = `"${value}"`;
+                        }
+                    }
+                    return value;
+                };
+
+                // Construct CSV rows
+                const csvRows = [];
+                csvRows.push(headers.join(',')); // Add header row
+
+                oeeData.forEach(data => {
+                    const row = [
+                        escapeCSV(data.date),
+                        escapeCSV(data.workcenter),
+                        escapeCSV(data.productionOrder),
+                        escapeCSV(data.productID),
+                        escapeCSV(data.shop),
+                        escapeCSV(data.shift),
+                        escapeCSV(data.operatorName),
+                        escapeCSV(data.availability),
+                        escapeCSV(data.performance),
+                        escapeCSV(data.quality),
+                        escapeCSV(data.oee),
+                        escapeCSV(data.totalRunningTime),
+                        escapeCSV(data.totalDowntime),
+                        escapeCSV(data.totalQualityTime)
+                    ].join(',');
+
+                    csvRows.push(row);
+                });
+
+                // Join all rows with newline character
+                const csvString = csvRows.join('\n');
+
+                // Create a Blob from the CSV string
+                const blob = new Blob([csvString], { type: 'text/csv;charset=utf-8;' });
+
+                // Create a link to download the Blob as a file
+                const link = document.createElement('a');
+                const url = URL.createObjectURL(blob);
+                link.setAttribute('href', url);
+
+                // Generate a dynamic filename with current date
+                const timestamp = new Date().toISOString().split('T')[0];
+                link.setAttribute('download', `oee_data_${timestamp}.csv`);
+
+                // Append the link to the DOM, click it to initiate download, and remove it
+                link.style.visibility = 'hidden';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+
+                alert('OEE data exported successfully!');
+            } catch (error) {
+                console.error('Error exporting OEE data:', error);
+                alert('An error occurred while exporting OEE data. Please check the console for more details.');
+            }
         }
     </script>
 </body>
